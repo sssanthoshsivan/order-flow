@@ -1,21 +1,15 @@
 import { CartData } from "@/types";
 import CartView from "@/components/CartView";
+import cartData from "@/data/cart.json";
 
-async function getCartData(): Promise<CartData> {
-  // Fetch from the local API route during SSR
-  // In production, this would be an external API
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/cart`, { cache: "no-store" });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch cart data");
-  }
-
-  return res.json();
+function getCartData(): CartData {
+  // Import cart data directly — works reliably in Server Components
+  // both locally and on Vercel (no running server needed at build time)
+  return cartData as CartData;
 }
 
-export default async function CartPage() {
-  const data = await getCartData();
+export default function CartPage() {
+  const data = getCartData();
 
   return (
     <CartView
